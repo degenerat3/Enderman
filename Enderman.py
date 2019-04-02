@@ -31,12 +31,13 @@ def read_module_code(filename):
     @param filename: the file holding the src code
     @return: a string containing the code
     """
-    # TODO: Extract the code from the zipfile here
-    
-    # Until then, just read from the file directly
-    with open(filename) as fil:
-        contents = fil.read()
-    return contents
+    if sys.argv[0].endswith(".zip"):
+        with zipfile.ZipFile(sys.argv[0]) as z:
+            result = z.read(filename)
+    else:
+        with open(filename) as f:
+            result = f.read()
+    return result
 
 
 def drop_module(dest_file_path):
