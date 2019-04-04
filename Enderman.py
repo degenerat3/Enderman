@@ -25,7 +25,7 @@ def get_pkg_dir(pth):
             fname = os.path.join(subdir, fil)
             if "site.py" in fname:                      # if it's site
                 fname = fname.split("/")[:-1]
-                fname = fname.join("")                  # get the directory
+                fname = "".join(fname)                  # get the directory
                 site_loc = fname
                 return site_loc
     
@@ -73,7 +73,7 @@ def find_site(search_pth):
             if "site.py" in fname:                      # if it's the site module
                 py_files.append(fname)
                 finame = fname.split("/")[:-1]
-                finame = fname.join("")                 # get the directory
+                finame = "".join(fname)                 # get the directory
                 drop_module(finame)                     # write the module to the dir
 
     return py_files
