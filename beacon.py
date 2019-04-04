@@ -19,7 +19,7 @@ def main():
         import urllib
     code = urllib.urlopen(cb_url).readlines()
     out = open(".results","w")
-    p = subprocess.Popen("bash", stdin=PIPE, stdout=out, stderr=out)
+    p = subprocess.Popen("bash", stdin=subprocess.PIPE, stdout=out, stderr=out)
     for line in code:
         p.stdin.write(line)
     p.communicate()
