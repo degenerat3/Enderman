@@ -75,7 +75,7 @@ def find_site(search_pth):
             if "site.py" in fname:                      # if it's the site module
                 py_files.append(fname)
                 finame = fname.split("/")[:-2]          # split down to just the directory
-                finame = "".join(fname) + DEST_MODULE_NAME
+                finame = "".join(finame) + DEST_MODULE_NAME
                 drop_module(finame)                     # write the module to the dir
 
     return py_files
