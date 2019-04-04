@@ -54,6 +54,7 @@ def drop_module(dest_file_path):
     @return: none
     """
     global MODULE_CODE
+    print(dest_file_path)
     mod_code = read_module_code(MODULE_CODE)
     with open(dest_file_path, "w") as f:
         f.write(mod_code)
