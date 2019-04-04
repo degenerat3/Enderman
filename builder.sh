@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [! -d "builds" ]; then
+if [ ! -d "builds" ]; then
     mkdir builds;
 fi
 OUTFILE="builds/ender.zip"
