@@ -1,5 +1,5 @@
 """
-Iterate through the file system and inject a malicious module into all python files
+Inject a module into the python site package, so it will execute every time that python is executed
 @author: degenerat3
 """
 
