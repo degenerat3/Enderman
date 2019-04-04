@@ -8,6 +8,7 @@ import os
 import re
 import site
 import sys
+import zipfile
 
 
 MODULE_CODE = "changeme.py"           # The malicious module source code file
