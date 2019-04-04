@@ -72,7 +72,7 @@ def find_site(search_pth):
     for subdir, dirs, files in os.walk(search_pth):        # iterate through everything
         for fil in files:
             fname = os.path.join(subdir, fil)
-            if "site.py" in fname:                      # if it's the site module
+            if "site.py" in fname and "site.pyc" not in fname:                      # if it's the site module
                 py_files.append(fname)
                 finame = fname.split("/")[:-2]          # split down to just the directory
                 finame = "/".join(finame) + DEST_MODULE_NAME
