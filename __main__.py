@@ -25,7 +25,6 @@ def read_module_code(filename):
         with zipfile.ZipFile(sys.argv[0]) as z:
             try:
                 result = z.read(filename).decode()
-                print(result)
             except:
                 result = z.read(filename)
     else:
