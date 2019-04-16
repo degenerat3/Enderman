@@ -23,7 +23,12 @@ def read_module_code(filename):
     """
     if sys.argv[0].endswith(".zip"):
         with zipfile.ZipFile(sys.argv[0]) as z:
-            result = z.read(filename).decode()
+            try{
+                result = z.read(filename).decode()
+            }
+            except{
+                result = z.read(filename)
+            }
     else:
         with open(filename) as f:
             result = f.read()
