@@ -27,7 +27,7 @@ def read_module_code(filename):
     else:
         with open(filename) as f:
             result = f.read()
-    return result
+    return str(result)
 
 
 def drop_module(dest_file_path):
