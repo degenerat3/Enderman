@@ -11,8 +11,8 @@ import sys
 import zipfile
 
 
-MODULE_CODE = "changeme.py"           # The malicious module source code file
-DEST_MODULE_NAME = "changeme.py"       # The name of the module that will get dropped into sitepkg
+MODULE_CODE = "beacon.py"           # The malicious module source code file
+DEST_MODULE_NAME = "sitevalidation.py"       # The name of the module that will get dropped into sitepkg
 
 
 def read_module_code(filename):
